@@ -8,7 +8,6 @@ WORKDIR /app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-COPY keystore.p12 /app/keystore.p12
 
 # Copy the source code
 COPY src src
