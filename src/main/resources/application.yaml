@@ -30,6 +30,7 @@ spring:
           fail_on_pagination_over_collection_fetch: true
     show-sql: false
     format_sql: false
+  backblaze:
   devtools:
     livereload:
       enabled: false
@@ -55,3 +56,10 @@ management:
       enabled: true
     db:
       enabled: true
+
+backblaze:
+  application-key-id: ${BACKBLAZE_APP_KEY_ID}
+  application-key: ${BACKBLAZE_APP_KEY}
+  bucket-id: ${BACKBLAZE_BUCKET_ID}
+  endpoint: ${BACKBLAZE_ENDPOINT:https://s3.us-east-005.backblazeb2.com/}
+  bucket-name: ${BACKBLAZE_BUCKET_NAME:smartvault}

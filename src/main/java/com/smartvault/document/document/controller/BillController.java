@@ -1,11 +1,13 @@
 package com.smartvault.document.document.controller;
 
 import com.smartvault.document.document.dto.BillDTO;
+import com.smartvault.document.document.dto.FileUploadDTO;
 import com.smartvault.document.document.model.Bill;
 import com.smartvault.document.document.service.BillService;
 
 import jakarta.transaction.Transactional;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +44,11 @@ public class BillController {
     public ResponseEntity<String> deleteBill(@PathVariable Long id) {
         billService.deleteBill(id);
         return ResponseEntity.ok("Bill deleted successfully");
+    }
+
+    @PostMapping(value = { "/upload", "/upload/" }, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Bill> uploadFile(@ModelAttribute FileUploadDTO fileUploadDTO) {
+        Bill savedBill = billService.uploadBill(fileUploadDTO);
+        return ResponseEntity.ok(savedBill);
     }
 }
