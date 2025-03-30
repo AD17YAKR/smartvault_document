@@ -3,6 +3,7 @@ package com.smartvault.document.document.service;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.file.Path;
 
@@ -10,25 +11,29 @@ import java.nio.file.Path;
 public class BackblazeService {
 
     private final S3Client s3Client;
+    private final String bucketName;
+    private final String endpoint;
+    private final String baseUrl;
 
-    private static final String BUCKET_NAME = System.getenv("BACKBLAZE_BUCKET_NAME");
-    private static final String ENDPOINT = System.getenv("BACKBLAZE_ENDPOINT");
-
-    private static final String BASE_URL = ENDPOINT + "/" + BUCKET_NAME + "/";
-
-    public BackblazeService(S3Client s3Client) {
-        if (BUCKET_NAME == null || BUCKET_NAME.trim().isEmpty()) {
+    public BackblazeService(
+            S3Client s3Client,
+            @Value("${backblaze.bucket-name}") String bucketName,
+            @Value("${backblaze.endpoint}") String endpoint) {
+        if (bucketName == null || bucketName.trim().isEmpty()) {
             throw new IllegalStateException("Bucket name is not configured in environment variables");
         }
-        if (ENDPOINT == null || ENDPOINT.trim().isEmpty()) {
+        if (endpoint == null || endpoint.trim().isEmpty()) {
             throw new IllegalStateException("Endpoint is not configured in environment variables");
         }
         this.s3Client = s3Client;
+        this.bucketName = bucketName;
+        this.endpoint = endpoint;
+        this.baseUrl = endpoint + "/" + bucketName + "/";
     }
 
     public String uploadFile(String key, Path filePath) {
         s3Client.putObject(PutObjectRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .key(key)
                 .build(),
                 filePath);
@@ -37,6 +42,6 @@ public class BackblazeService {
     }
 
     public String getPublicFileUrl(String key) {
-        return BASE_URL + key;
+        return baseUrl + key;
     }
 }
